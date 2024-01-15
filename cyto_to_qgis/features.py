@@ -1,4 +1,5 @@
 import json
+import os
 
 
 class Feature:
@@ -6,6 +7,8 @@ class Feature:
     Class to create geojson features. supported Features right now are: LineString and Point.
     """
     def __init__(self, obj_type: str, coordinates: list, properties: dict) -> None:
+        if not coordinates:
+            raise ValueError("Coordinates cannot be empty.")
         if self._validate_obj_type(obj_type):
             self.structure = {
                 "type": "Feature",
@@ -66,9 +69,10 @@ class FeatureCollection:
         """
         try:
             geo_json = json.dumps(self._get_features(), indent=4)
+            os.makedirs(os.path.dirname(path), exist_ok=True)
             with open(path, "w") as of:
                 of.write(geo_json)
-        except (FileNotFoundError, PermissionError) as e:
+        except (Exception, PermissionError) as e:
             print(f"Error saving geojson: {e}")
 
     def _get_features(self) -> dict:
