@@ -1,8 +1,7 @@
 import json
-
 import pandas as pd
 
-from features import Feature, FeatureCollection
+from .features import Feature, FeatureCollection
 
 
 class GISManager:
@@ -170,17 +169,6 @@ class GISManager:
             places_dict[place] = [float(lon), float(lat)]
 
         return places_dict
-
-    @staticmethod
-    def _save_geojson(path: str, json_data: dict) -> None:
-        """
-        func for saving geojson to disk
-        :param path: str
-        :param json_data: json object
-        :return: none
-        """
-        with open(path, "w") as of:
-            of.write(json_data)
 
     @staticmethod
     def _get_location_set(location_df: pd.DataFrame) -> set:
