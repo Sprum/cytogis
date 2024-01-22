@@ -70,15 +70,16 @@ class GISManager:
         locations_data = locations_data[(locations_data[lat] != "undefined") & (locations_data[long] != "undefined")]
         return locations_data
 
-    def create_features_edges(self) -> FeatureCollection:
+    def create_features_edges(self, **kwargs) -> FeatureCollection:
         """
         method produces LineString geojson objects, puts them into a geojson FeatureCollection
         and returns the FeatureCollection.
+        :param: processed: bool will be passed as kwarg downwards for _get_connections
         :return: FeatureCollection of network edges
         """
         # create collection
         collection = FeatureCollection()
-        for line_string in self._make_line_strings():
+        for line_string in self._make_line_strings(**kwargs):
             collection.add_feature(line_string)
         return collection
 
@@ -110,7 +111,7 @@ class GISManager:
 
         return collection
 
-    def _make_line_strings(self) -> list:
+    def _make_line_strings(self, **kwargs) -> list:
         """
         func to make LineString objects for geojson.
         :return: list of Linestring objects.
@@ -119,7 +120,7 @@ class GISManager:
         locations_map = self._dataframe_to_dict(self.coordinates_data)
         list_of_edges = []
         edges = self.list_of_edges
-        edges = self._get_connections(edges)
+        edges = self._get_connections(edges, **kwargs)
         for source, targets in edges.items():
 
             # check if source has coordinates
@@ -139,10 +140,11 @@ class GISManager:
         return list_of_edges
 
     @staticmethod
-    def _get_connections(edges: list) -> dict:
+    def _get_connections(edges: list, processed=True) -> dict:
         """
         func to get a dict with all locations and their respective outward communications(target: amount of letters)
         :param edges: list
+        :param: processed: bool indicating whether or not cjs is a file that was processed by Cytoscape
         :return: dict with source of letter as key and targets as values
         """
         all_edges = {}  # a dictionary to store connections
@@ -150,9 +152,14 @@ class GISManager:
         # loop through edges
         for edge in edges:
             data = edge["data"]
-            source = data["source"]
+            if processed:
+                source = data.get("source_original")
+                target = data.get("target_original")
+            else:
+                source = data["source"]
+                target = data["target"]
             weight = data["weight"]
-            target = data["target"]
+
 
             # Create a dictionary for the current target and weight
             target_city = {target: weight}
