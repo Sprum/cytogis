@@ -20,6 +20,9 @@ CONFIG = {
     "coord_path": "YOUR_PATH_TO_COORDINATES_CSV",
     "out_path_nodes": "YOUR_PATH_TO_OUTPUT_NODES",
     "out_path_edges": "YOUR_PATH_TO_OUTPUT_EDGES",
+    "lat_long_cols": ("your column name for latitude", "your column name for longitude"),
+    "cols_to_drop": ["your", "cols", "to", "drop"]  # optional
+    
 }
 
 # Instantiate GIS Manager

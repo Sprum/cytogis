@@ -17,7 +17,7 @@ class GISManager:
     def __init__(self, config) -> None:
         self.config = config
         self.list_of_nodes, self.list_of_edges = self._get_nodes_edges()
-        self.coordinates_data = self._map_locations(config["cols_to_drop"])
+        self.coordinates_data = self._map_locations()
         self.unique_locations = self._get_location_set(self.coordinates_data)
 
     def _read_data_cyto(self) -> dict:
@@ -30,7 +30,13 @@ class GISManager:
                 data = json.load(f)
             return data
         except FileNotFoundError:
-            print(f"File not found {self.config['cyto_path']}")
+            self.config['cyto_path'] = input(
+                f"File not found: {self.config['cyto_path']}, please provide a valid path to file:")
+            return self._read_data_cyto()
+        except OSError:
+            self.config['cyto_path'] = input(
+                f"Corrupted path: {self.config['cyto_path']}.  does the path you provided contain ' or \"? ")
+            return self._read_data_cyto()
 
     def _get_nodes_edges(self) -> tuple:
         """
@@ -42,26 +48,28 @@ class GISManager:
         edges = data["elements"]["edges"]
         return nodes, edges
 
-    def _map_locations(self, cols_to_drop: list, delimiter: str = ";") -> pd.DataFrame:
+    def _map_locations(self, delimiter: str = ";") -> pd.DataFrame:
         """
         func to map locations to coordinates. only uses locations that have associated coordinates.
-        :return: pd.DataFrame
+        :return: pd.DataFrame containing the places and their respective coordinates
         """
+        lat, long = self.config["lat_long_cols"]
         # read in data from csv
         locations_data = pd.read_csv(self.config["coord_path"], delimiter=delimiter)
-        # drop unnecessary cols
-        locations_data.drop(cols_to_drop, axis=1, inplace=True)
+        # drop unnecessary cols if configured to do so
+        if "cols_to_drop" in self.config.keys():
+            locations_data.drop(self.config["cols_to_drop"], axis=1, inplace=True)
         # drop NAN containing rows
         locations_data.dropna(axis=0, inplace=True)
         # filter "undefined"
-        locations_data = locations_data[(locations_data["Lat"] != "undefined") & (locations_data["Len"] != "undefined")]
+        locations_data = locations_data[(locations_data[lat] != "undefined") & (locations_data[long] != "undefined")]
         return locations_data
 
     def create_features_edges(self) -> FeatureCollection:
         """
         method produces LineString geojson objects, puts them into a geojson FeatureCollection
         and returns the FeatureCollection.
-        :return: FeatureCollection
+        :return: FeatureCollection of network edges
         """
         # create collection
         collection = FeatureCollection()
@@ -72,7 +80,7 @@ class GISManager:
     def create_features_nodes(self) -> FeatureCollection:
         """
         method produces Point objects for geojson. Returns a Feature collection in geojson object.
-        :return: FeatureCollection
+        :return: FeatureCollection of network nodes
         """
         collection = FeatureCollection()
 
@@ -99,8 +107,8 @@ class GISManager:
 
     def _make_line_strings(self) -> list:
         """
-        func to make LineString objects for geojson. returns a list of Linestring objects.
-        :return: list
+        func to make LineString objects for geojson.
+        :return: list of Linestring objects.
         """
         unique_locations = self.unique_locations
         locations_map = self._dataframe_to_dict(self.coordinates_data)
@@ -130,7 +138,7 @@ class GISManager:
         """
         func to get a dict with all locations and their respective outward communications(target: amount of letters)
         :param edges: list
-        :return: dict
+        :return: dict with source of letter as key and targets as values
         """
         all_edges = {}  # a dictionary to store connections
 
@@ -175,7 +183,7 @@ class GISManager:
         """
         func to get a set of locations that have coordinates
         :param location_df:
-        :return:
+        :return: set of unique locations that contain coordinates
         """
         locations_set = set(location_df["Ort"].unique())
         return locations_set

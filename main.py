@@ -6,12 +6,12 @@ CONFIG = {"cyto_path": "./input/MutiDi_Städte1500-1700.cyjs",
           "out_path_nodes": "./output/cities_nodes.geojson",
           "out_path_edges": "./output/cities_edges.geojson",
           "cols_to_drop": ["geprüft", "Typ", "GND"],
+          "lat_long_cols": ("Lat", "Len")
           }
 
 if __name__ == "__main__":
     # instantiate GIS obj
     gis = GISManager(CONFIG)
-
     print("processing edges..")
     # create edges geojson obj and save it to disk
     edges_collection = gis.create_features_edges()
