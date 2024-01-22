@@ -5,7 +5,7 @@ CONFIG = {"cyto_path": "./input/MutiDi_Städte1500-1700.cyjs",
           "coord_path": "./input/location_f.csv",
           "out_path_nodes": "./output/cities_nodes.geojson",
           "out_path_edges": "./output/cities_edges.geojson",
-          "cols_to_drop": ["geprüft", "Typ", "GND"],
+          "cols_to_drop": ["geprüft", "Typ", "GND"],    # optional
           "lat_long_cols": ("Lat", "Len")
           }
 

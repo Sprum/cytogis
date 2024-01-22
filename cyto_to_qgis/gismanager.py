@@ -11,7 +11,12 @@ class GISManager:
     - turn Cytoscape Edges into LineString geojson objects
 
     expects a config dictionary
-    * cols_to_drop - specifies which cols from the csv containing the coordinates should be dropped
+    * cyto_path - specifies path to the .cyjs Cytoscape file: str
+    * coord_path - specifies path to a csv containing lat and long for the places: str
+    * lat_long_cols - specifies the names of the columns containing lat and long coordinates: tuple
+    optional:
+    * cols_to_drop - specifies which cols from the csv containing the coordinates should be dropped: list
+
     """
 
     def __init__(self, config) -> None:
