@@ -1,4 +1,4 @@
-from src.cyto_to_qgis import GISManager
+from src.cytogis import GISManager
 
 
 if __name__ == "__main__":

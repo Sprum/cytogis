@@ -1,5 +1,5 @@
 import unittest
-from src.cyto_to_qgis import Feature
+from src.cytogis import Feature
 
 
 class TestFeatureInitialization(unittest.TestCase):

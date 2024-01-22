@@ -12,7 +12,7 @@ It provides functionality to extract node and edge data from Cytoscape JSON repr
 ## Usage
 Example for Using cyto_to_qgis:
 ```python
-from cyto_to_gis import GISManager
+from cytogis import GISManager
 
 # Configure your input and output paths
 CONFIG = {
