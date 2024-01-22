@@ -144,7 +144,7 @@ class GISManager:
         """
         func to get a dict with all locations and their respective outward communications(target: amount of letters)
         :param edges: list
-        :param: processed: bool indicating whether or not cjs is a file that was processed by Cytoscape
+        :param: processed: bool indicating whether cjs is a file that was processed by Cytoscape
         :return: dict with source of letter as key and targets as values
         """
         all_edges = {}  # a dictionary to store connections
