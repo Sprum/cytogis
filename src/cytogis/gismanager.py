@@ -70,7 +70,7 @@ class GISManager:
         locations_data = locations_data[(locations_data[lat] != "undefined") & (locations_data[long] != "undefined")]
         return locations_data
 
-    def create_features_edges(self, **kwargs) -> FeatureCollection:
+    def create_features_edges(self) -> FeatureCollection:
         """
         method produces LineString geojson objects, puts them into a geojson FeatureCollection
         and returns the FeatureCollection.
@@ -79,7 +79,7 @@ class GISManager:
         """
         # create collection
         collection = FeatureCollection()
-        for line_string in self._make_line_strings(**kwargs):
+        for line_string in self._make_line_strings():
             collection.add_feature(line_string)
         return collection
 
@@ -89,7 +89,11 @@ class GISManager:
         :return: FeatureCollection of network nodes
         """
         collection = FeatureCollection()
-
+        # check if input is processed and set identifier accordingly:
+        if self.config.get("processed"):
+            identifier = "id_original"
+        else:
+            identifier = "id"
         for node in self.list_of_nodes:
 
             # validate city has data
@@ -99,14 +103,20 @@ class GISManager:
                 lng = node["data"]["lng"]
                 # float them
                 coordinates = [float(lng.lstrip("0")), float(lat.lstrip("0"))]
+                node_properties = dict()
+
+                # filter for properties that should be dropped:
+                if self.config.get("node_props_drop"):
+                    for key, val in node["data"].items():
+                        if key not in self.config["node_props_drop"]:
+                            node_properties[key] = val
 
                 # create feature
                 feature = Feature("Point", coordinates,
-                                  properties={"name": node["data"]["id"], "typ": node["data"]["Typ"],
-                                              "connections": None}
+                                  properties={"name": node["data"][identifier],
+                                              "connections": None, **node_properties}
                                   )
                 # append current feature to feature list
-
                 collection.add_feature(feature.populated_obj)
 
         return collection
@@ -120,7 +130,9 @@ class GISManager:
         locations_map = self._dataframe_to_dict(self.coordinates_data)
         list_of_edges = []
         edges = self.list_of_edges
-        edges = self._get_connections(edges, **kwargs)
+        processed = self.config.get("processed")
+
+        edges = self._get_connections(edges, processed=processed)
         for source, targets in edges.items():
 
             # check if source has coordinates
@@ -159,7 +171,6 @@ class GISManager:
                 source = data["source"]
                 target = data["target"]
             weight = data["weight"]
-
 
             # Create a dictionary for the current target and weight
             target_city = {target: weight}
