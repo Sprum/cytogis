@@ -1,6 +1,6 @@
 import os
 import unittest
-from cyto_to_qgis.features import FeatureCollection
+from src.cyto_to_qgis import FeatureCollection
 
 
 class TestFeatureCollectionInitialization(unittest.TestCase):
