@@ -31,7 +31,7 @@ class GISManager:
         :return: dict
         """
         try:
-            with open(self.config["cyto_path"], 'r') as f:
+            with open(self.config["cyto_path"], 'r', encoding="UTF-8") as f:
                 data = json.load(f)
             return data
         except FileNotFoundError:
@@ -102,7 +102,10 @@ class GISManager:
                 lat = node["data"]["lat"]
                 lng = node["data"]["lng"]
                 # float them
-                coordinates = [float(lng.lstrip("0")), float(lat.lstrip("0"))]
+                if not isinstance(lat, float):
+                    coordinates = [float(lng.lstrip("0")), float(lat.lstrip("0"))]
+                else:
+                    coordinates = [lng, lat]
                 node_properties = dict()
 
                 # filter for properties that should be dropped:

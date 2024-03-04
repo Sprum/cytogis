@@ -2,10 +2,10 @@ from src.cytogis import GISManager
 
 if __name__ == "__main__":
     # confs: configure your in- and output paths ("../" goes to parent dir, "./" is the dir of the script)
-    CONFIG = {"cyto_path": "../input/clustered.cyjs",
+    CONFIG = {"cyto_path": "../input/tübingen export.cyjs",
               "coord_path": "../input/location_f.csv",
-              "out_path_nodes": "../output/cities_nodes.geojson",
-              "out_path_edges": "../output/cities_edges.geojson",
+              "out_path_nodes": "../output/tübingen_nodes3.geojson",
+              "out_path_edges": "../output/tübingen_edges3.geojson",
               "lat_long_cols": ("Lat", "Len"),
               "node_props_drop": ["lng", "lat", "id", "shared_name", "name", "value"],
               "processed": True,

@@ -70,7 +70,7 @@ class FeatureCollection:
         try:
             geo_json = json.dumps(self._get_features(), indent=4)
             os.makedirs(os.path.dirname(path), exist_ok=True)
-            with open(path, "w") as of:
+            with open(path, "w", encoding='UTF-8') as of:
                 of.write(geo_json)
         except (Exception, PermissionError) as e:
             print(f"Error saving geojson: {e}")
