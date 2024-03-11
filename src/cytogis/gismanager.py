@@ -124,6 +124,50 @@ class GISManager:
 
         return collection
 
+    def weight_nodes(self, node_features: FeatureCollection, outwards_only: bool = False,
+                     **kwargs) -> FeatureCollection:
+        """
+        method to weight nodes by their connections. Returns a FeatureCollection with weighted nodes.
+        :param node_features: FeatureCollection with unweighted nodes
+        :param outwards_only: bool indicating whether only outwards connections should be considered
+        :param kwargs: kwargs
+        :return: FeatureCollection with weighted nodes
+        """
+        edges = self.list_of_edges
+        features = node_features.get_features()
+        new_collection = FeatureCollection()
+
+        # iterate over features
+        for feature in features:
+            new_feature = feature
+            new_feature["properties"]["connections"] = []
+            new_feature["properties"]["weight"] = 0
+            name = feature["properties"]["id_original"]
+
+            # iterate over edges
+            for edge in edges:
+                source_name = edge["data"]["source_original"]
+                target_name = edge["data"]["target_original"]
+
+                # weight outwards connections
+                if name == source_name:
+                    weigth = edge["data"]["weight"]
+                    if not target_name in new_feature["properties"]["connections"]:
+                        new_feature["properties"]["connections"].append(target_name)
+                    target_name = edge["data"]["target_original"]
+                    new_feature["properties"]["weight"] += weigth
+
+                # weight inwards connections if specified in args
+                if not outwards_only and target_name == name:
+                    weight = edge["data"]["weight"]
+                    new_feature["properties"]['weight'] += weight
+                    if not source_name in new_feature["properties"]["connections"]:
+                        new_feature["properties"]["connections"].append(source_name)
+
+            new_collection.add_feature(new_feature)
+
+        return new_collection
+
     def _make_line_strings(self, **kwargs) -> list:
         """
         func to make LineString objects for geojson.

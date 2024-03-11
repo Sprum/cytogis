@@ -2,10 +2,10 @@ from src.cytogis import GISManager
 
 if __name__ == "__main__":
     # confs: configure your in- and output paths ("../" goes to parent dir, "./" is the dir of the script)
-    CONFIG = {"cyto_path": "../input/tübingen export.cyjs",
+    CONFIG = {"cyto_path": "../input/MutiDi_Städte_Ego_Tübingen1564-1572.cyjs--clustered.cyjs",
               "coord_path": "../input/location_f.csv",
-              "out_path_nodes": "../output/tübingen_nodes3.geojson",
-              "out_path_edges": "../output/tübingen_edges3.geojson",
+              "out_path_nodes": "../output/tübingen_nodes4.geojson",
+              "out_path_edges": "../output/tübingen_edges4.geojson",
               "lat_long_cols": ("Lat", "Len"),
               "node_props_drop": ["lng", "lat", "id", "shared_name", "name", "value"],
               "processed": True,
@@ -26,4 +26,6 @@ if __name__ == "__main__":
     nodes_collection.save_geojson(CONFIG["out_path_nodes"])
     print("done!")
 
+    weighted_nodes = gis.weight_nodes(nodes_collection)
+    weighted_nodes.save_geojson("../output/new_nodes.geojson")
     print("Process finished.")

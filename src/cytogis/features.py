@@ -1,5 +1,6 @@
 import json
 import os
+from typing import List
 
 
 class Feature:
@@ -57,7 +58,7 @@ class FeatureCollection:
             ]
         }
 
-    def add_feature(self, feature) -> None:
+    def add_feature(self, feature: Feature) -> None:
         """adds feature to collection"""
         self.__structure["features"].append(feature)
 
@@ -68,13 +69,24 @@ class FeatureCollection:
         :return: none
         """
         try:
-            geo_json = json.dumps(self._get_features(), indent=4)
+            geo_json = json.dumps(self._get_content(), indent=4)
             os.makedirs(os.path.dirname(path), exist_ok=True)
             with open(path, "w", encoding='UTF-8') as of:
                 of.write(geo_json)
         except (Exception, PermissionError) as e:
             print(f"Error saving geojson: {e}")
 
-    def _get_features(self) -> dict:
+    def get_features(self) -> List:
+        """getter method for features"""
+        return self.__structure['features']
+
+    def _get_content(self) -> dict:
         """getter method"""
         return self.__structure
+
+    def set_features(self, features: List) -> None:
+        """setter method for features"""
+        self.__structure['features'] = features
+
+    def __repr__(self):
+        return f"FeatureCollection with {len(self.__structure['features'])} features.\n{self.__structure}"

@@ -21,7 +21,7 @@ class TestFeatureCollectionAddingFeatures(unittest.TestCase):
 
     def test_add_feature_method(self):
         self.feature_collection.add_feature(self.feature)
-        self.assertEqual(len(self.feature_collection._get_features()["features"]), 1)
+        self.assertEqual(len(self.feature_collection.get_features()["features"]), 1)
 
 
 class TestFeatureCollectionSavingGeoJSON(unittest.TestCase):
@@ -50,7 +50,7 @@ class TestFeatureCollectionEdgeCases(unittest.TestCase):
 
     def test_initialize_feature_collection_with_empty_structure(self):
         feature_collection = FeatureCollection()
-        self.assertEqual(feature_collection._get_features()["features"], [])
+        self.assertEqual(feature_collection.get_features()["features"], [])
 
     def test_save_geojson_with_invalid_path(self):
         feature_collection = FeatureCollection()
